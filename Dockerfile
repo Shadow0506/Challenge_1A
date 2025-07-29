@@ -8,6 +8,8 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    curl \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
@@ -21,9 +23,10 @@ COPY process_pdfs.py .
 COPY pdf_parser.py .
 COPY heading_extractor.py .
 COPY utils.py .
+COPY download_model.py .
 
-# Copy the trained model
-COPY student_final/ ./student_final/
+# Download the trained model during build
+RUN python download_model.py
 
 # Create input and output directories
 RUN mkdir -p /app/input /app/output
